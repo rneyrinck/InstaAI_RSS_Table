@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Instagram Content Table</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+    th, td {
+      padding: 12px;
+      border: 1px solid #ddd;
+      text-align: left;
+    }
+    th {
+      background-color: #f4f4f4;
+    }
+    textarea {
+      width: 100%;
+      height: 200px;
+      margin-bottom: 10px;
+    }
+    button {
+      padding: 10px 15px;
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <h1>Instagram Content Generator</h1>
+  <p>Paste your JSON object here and click "Generate Table":</p>
+
+  <textarea id="jsonInput" placeholder='Paste your JSON object here'></textarea>
+  <button onclick="generateTable()">Generate Table</button>
+
+  <h2>Generated Table</h2>
+  <table id="contentTable">
+    <thead>
+      <tr>
+        <th>Caption</th>
+        <th>Visual Suggestion</th>
+        <th>Hashtags</th>
+        <th>Call to Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Table content will be dynamically generated here -->
+    </tbody>
+  </table>
+
+  <script>
+    function generateTable() {
+      // Get JSON input from the textarea
+      const jsonData = document.getElementById('jsonInput').value;
+
+      try {
+        const data = JSON.parse(jsonData);
+
+        // Get table body element
+        const tableBody = document.getElementById('contentTable').getElementsByTagName('tbody')[0];
+
+        // Clear any existing table content
+        tableBody.innerHTML = '';
+
+        // Iterate over the posts and generate table rows
+        data.posts.forEach(post => {
+          const row = document.createElement('tr');
+
+          // Create cells for each attribute
+          const captionCell = document.createElement('td');
+          captionCell.textContent = post.caption;
+          row.appendChild(captionCell);
+
+          const visualCell = document.createElement('td');
+          visualCell.textContent = post.visual_suggestion;
+          row.appendChild(visualCell);
+
+          const hashtagsCell = document.createElement('td');
+          hashtagsCell.textContent = post.hashtags.join(', ');
+          row.appendChild(hashtagsCell);
+
+          const ctaCell = document.createElement('td');
+          ctaCell.textContent = post.call_to_action;
+          row.appendChild(ctaCell);
+
+          // Append the row to the table body
+          tableBody.appendChild(row);
+        });
+      } catch (e) {
+        alert("Invalid JSON format. Please check your input.");
+      }
+    }
+  </script>
+</body>
+</html>
