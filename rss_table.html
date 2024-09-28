@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Instagram Content Table For RSS Feed</title>
+  <title>Instagram Content Generator</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -33,18 +33,24 @@
       color: white;
       border: none;
       cursor: pointer;
+      margin-right: 10px;
     }
     button:hover {
       background-color: #0056b3;
+    }
+    #rssOutput {
+      display: none;
     }
   </style>
 </head>
 <body>
   <h1>Instagram Content Generator</h1>
-  <p>Paste your JSON object here and click "Generate Table":</p>
+  <p>Paste your JSON object here and choose to generate a table or RSS feed:</p>
 
   <textarea id="jsonInput" placeholder='Paste your JSON object here'></textarea>
+  <br>
   <button onclick="generateTable()">Generate Table</button>
+  <button onclick="generateRSS()">Generate RSS Feed</button>
 
   <h2>Generated Table</h2>
   <table id="contentTable">
@@ -61,6 +67,10 @@
     </tbody>
   </table>
 
+  <h2>Generated RSS Feed</h2>
+  <textarea id="rssOutput" readonly></textarea>
+
+
   <script>
     function generateTable() {
       // Get JSON input from the textarea
@@ -69,10 +79,11 @@
       try {
         const data = JSON.parse(jsonData);
 
-        // Get table body element
-        const tableBody = document.getElementById('contentTable').getElementsByTagName('tbody')[0];
+        // Hide RSS Output
+        document.getElementById('rssOutput').style.display = 'none';
 
-        // Clear any existing table content
+        // Show the table
+        const tableBody = document.getElementById('contentTable').getElementsByTagName('tbody')[0];
         tableBody.innerHTML = '';
 
         // Iterate over the posts and generate table rows
@@ -99,6 +110,35 @@
           // Append the row to the table body
           tableBody.appendChild(row);
         });
+      } catch (e) {
+        alert("Invalid JSON format. Please check your input.");
+      }
+    }
+
+    function generateRSS() {
+      // Get JSON input from the textarea
+      const jsonData = document.getElementById('jsonInput').value;
+
+      try {
+        const data = JSON.parse(jsonData);
+
+        // Clear and hide table
+        document.getElementById('contentTable').getElementsByTagName('tbody')[0].innerHTML = '';
+
+        // Build RSS feed content
+        let rssFeed = `<?xml version="1.0" encoding="UTF-8" ?>\n<rss version="2.0">\n  <channel>\n    <title>Frontpage Instagram Content</title>\n    <link>https://yourwebsite.com/</link>\n    <description>Instagram content for Frontpage campaign</description>\n`;
+
+        data.posts.forEach(post => {
+          rssFeed += `    <item>\n      <title>${post.caption}</title>\n      <description>${post.visual_suggestion}</description>\n      <link>http://kck.st/3BkPmPP</link>\n    </item>\n`;
+        });
+
+        rssFeed += `  </channel>\n</rss>`;
+
+        // Show the RSS Output
+        const rssOutput = document.getElementById('rssOutput');
+        rssOutput.style.display = 'block';
+        rssOutput.value = rssFeed;
+
       } catch (e) {
         alert("Invalid JSON format. Please check your input.");
       }
